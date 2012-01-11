@@ -12,7 +12,7 @@ module TTCP
       :verbose => false,
       :socket_debug => false,
       :format_rate => 'm',
-      :number_buffers => 2048,
+      :num_buffers => 2048,
       :touch => false,
   }
 

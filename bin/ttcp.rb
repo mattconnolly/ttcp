@@ -56,12 +56,12 @@ Common options:
 ###-A	align the start of buffers to this modulus (default 16384)
 ###-O	start buffers at this offset from the modulus (default 0)
 -v	verbose: print more statistics
--d	set SO_DEBUG socket option
--b ##	set socket buffer size (if supported)
+###-d	set SO_DEBUG socket option
+###-b ##	set socket buffer size (if supported)
 -f X	format for rate: k,K = kilo{bit,byte}; m,M = mega; g,G = giga
 Options specific to -t:
 -n##	number of source bufs written to network (default 2048)
--D	don't buffer TCP writes (sets TCP_NODELAY socket option)
+###-D	don't buffer TCP writes (sets TCP_NODELAY socket option)
 Options specific to -r:
 ###-B	for -s, only output full blocks as specified by -l (for TAR)
 -T	\"touch\": access each byte as it's read
@@ -76,6 +76,11 @@ END
     options[:tcp] = false
   end
 
+  opts.on('--tcp', 'Use TCP instead of UDP') do
+    options[:udp] = false
+    options[:tcp] = true
+  end
+
   opts.on('-t', '--transmit', "Transmit data to another TTCP program") do
     options[:transmit] = true
     options[:receive] = false
@@ -86,11 +91,33 @@ END
     options[:transmit] = false
   end
 
+  opts.on('-s', '--sink',
+          "When transmitting, source pattern to network.",
+          "When receiving, discard all incoming data") do
+    options[:sink] = !options[:sink]
+  end
 
+  opts.on('-p', '--port PORT', "Receive on port PORT / Transmit to remote port PORT") do |port|
+    options[:port] = port.to_i if port.to_i > 0
+  end
+
+  opts.on('-v', '--verbose', "Verbose output") { options[:verbose] = true }
+  opts.on('-T', '--touch', "Touch (access) all incoming data") { options[:touch] = true }
+
+  opts.on('-n', '--numbufs NUM', "Set number of buffers to send / receive (default = #{options[:num_buffers]})") do |num|
+    options[:num_buffers] = num.to_i if num.to_i > 0
+  end
 end
 
 
 optparse.parse!
 
+
+unless options[:transmit] || options[:receive]
+
+  puts optparse.help
+  exit(1)
+
+end
 
 puts options.inspect
