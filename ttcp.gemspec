@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "ttcp-rb/version"
+require "ttcp/version"
 
 Gem::Specification.new do |s|
-  s.name        = "ttcp-rb"
-  s.version     = Ttcp::Rb::VERSION
+  s.name        = "ttcp"
+  s.version     = TTCP::VERSION
   s.authors     = ["Matt Connolly"]
   s.email       = ["matt@soundevolution.com.au"]
   s.homepage    = ""
