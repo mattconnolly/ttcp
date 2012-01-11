@@ -2,3 +2,9 @@
 .bundle
 Gemfile.lock
 pkg/*
+
+# mac noise
+.DS_Store
+
+# ruby mine noise
+.idea/
