@@ -11,8 +11,6 @@
 require 'optparse'
 require_relative '../lib/ttcp'
 
-include TTCP
-
 =begin
 Usage: ttcp -t [-options] host [ < in ]\n\
 ttcp -r [-options > out]\n\
@@ -40,7 +38,7 @@ Options specific to -r:\n\
 # defaults:
 #
 
-options = default_options
+options = TTCP::TTCP.default_options
 
 optparse = OptionParser.new do |opts|
   opts.banner = <<END
@@ -120,4 +118,7 @@ unless options[:transmit] || options[:receive]
 
 end
 
-puts options.inspect
+
+ttcp = TTCP::TTCP.new options
+ttcp.run
+

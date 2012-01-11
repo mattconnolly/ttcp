@@ -27,8 +27,37 @@ module TTCP
       DEFAULT_OPTIONS
     end
 
+    #
+    # Create a TTCP test program instance. All configuration is done via the
+    # options hash passed in here.
+    #
     def initialize(options = {})
-      @options = options
+      @options = TTCP.default_options.merge options
+    end
+
+    #
+    # Run the TTCP test program according to the options specified with the .new call
+    #
+    def run
+      puts "running the ttcp program"
+
+      if @options[:transmit]
+        transmit
+      elsif @options[:receive]
+        receive
+      else
+        raise "TTCP must be configured to transmit or receive"
+      end
+    end
+
+    private
+
+    def transmit
+      puts "Transmitting!"
+    end
+
+    def receive
+      puts "Receiving!"
     end
   end
 end
