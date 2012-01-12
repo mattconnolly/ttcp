@@ -99,14 +99,23 @@ END
   opts.on('-v', '--verbose', "Verbose output") { options[:verbose] = true }
   opts.on('-T', '--touch', "Touch (access) all incoming data") { options[:touch] = true }
 
+  opts.on('--version', "Output the version of TTCP") do
+    puts TTCP::VERSION
+    did_version = true
+    exit(0)
+  end
+
   opts.on('-n', '--numbufs NUM', "Set number of buffers to send / receive (default = #{options[:num_buffers]})") do |num|
     options[:num_buffers] = num.to_i if num.to_i > 0
   end
 
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
-    exit
+    exit(0)
   end
+
+
+
 end
 
 
@@ -129,6 +138,9 @@ begin
     raise "You cannot select both transmit and receive options."
   end
 
+rescue SystemExit
+  # let it go through, we've been told to exit
+  raise
 rescue Exception => x
   $stderr.puts optparse
   $stderr.puts x

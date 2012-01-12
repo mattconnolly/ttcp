@@ -1,4 +1,5 @@
 require "rspec"
+require 'spec_helper.rb'
 
 TTCP_EXECUTABLE = File.expand_path('../../bin/ttcp.rb', __FILE__)
 
@@ -32,5 +33,10 @@ describe "Command Line Option Parsing" do
   it "ttcp is ok with -r and no host" do
     test_ttcp '-r'
     $?.should == 0
+  end
+
+  specify "ttcp prints out the version" do
+    version = test_ttcp '--version'
+    version.chomp.should == TTCP::VERSION
   end
 end
