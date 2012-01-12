@@ -1,4 +1,5 @@
 require_relative "ttcp/version"
+require 'socket'
 
 module TTCP
 
@@ -23,6 +24,8 @@ module TTCP
 
   class TTCP
 
+    attr_reader :options
+
     def self.default_options
       DEFAULT_OPTIONS
     end
@@ -33,6 +36,12 @@ module TTCP
     #
     def initialize(options = {})
       @options = TTCP.default_options.merge options
+
+      if @options[:udp]
+        # enforce buffer length to be more than udp sentinel size.
+        @options[:length] = [@options[:length], 5].max
+      end
+
     end
 
     #
@@ -41,23 +50,46 @@ module TTCP
     def run
       puts "running the ttcp program"
 
+      # get the socket we will communicate on
+      socket
+
       if @options[:transmit]
-        transmit
-      elsif @options[:receive]
-        receive
+        puts "ttcp-t buflen=%d, nbuf=%d, port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
       else
-        raise "TTCP must be configured to transmit or receive"
+        puts "ttcp-r"
       end
+
+
     end
 
     private
 
-    def transmit
-      puts "Transmitting!"
+    # get the socket to be used for this ttcp run
+    def socket
+
+      if @socket.nil?
+        if @options[:transmit]
+
+          raise "Host not specified" unless @options[:host]
+
+          # create a socket to transmit to
+          if @options[:udp]
+            @socket = UDPSocket.new
+            @socket.bind(@options[:host], @options[:port])
+
+          else
+            @socket = TCPSocket.new(@options[:host], @options[:port])
+          end
+
+        elsif @options[:receive]
+          raise NotImplementedError.new("todo...")
+        else
+          raise "TTCP must be configured to transmit or receive"
+        end
+      end
+
+      @socket
     end
 
-    def receive
-      puts "Receiving!"
-    end
   end
 end
