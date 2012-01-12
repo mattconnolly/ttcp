@@ -65,29 +65,26 @@ Options specific to -r:
 -T	\"touch\": access each byte as it's read
 END
 
-  opts.on('-l', '--length NUM', "Length of bufs read from or written to network (default #{options[:length]})") do |length|
-    options[:length] = length.to_i if length.to_i > 0
-  end
-
-  opts.on('-u', '--udp', 'Use UDP instead of TCP') do
-    options[:udp] = true
-    options[:tcp] = false
-  end
-
-  opts.on('--tcp', 'Use TCP instead of UDP') do
-    options[:udp] = false
-    options[:tcp] = true
-  end
-
+  opts.separator "Must choose one of:"
   opts.on('-t', '--transmit', "Transmit data to another TTCP program") do
     options[:transmit] = true
-    options[:receive] = false
   end
 
   opts.on('-r', '--receive',  "Receive data from another TTCP program") do
     options[:receive] = true
-    options[:transmit] = false
   end
+
+  opts.separator ""
+  opts.separator "Other options:"
+  opts.on('-l', '--length NUM', "Length of bufs read from or written to network (default #{options[:length]})") do |length|
+    options[:length] = length.to_i if length.to_i > 0
+  end
+
+  opts.on('-u', '--udp', 'Use UDP instead of default TCP') do
+    options[:udp] = true
+    options[:tcp] = false
+  end
+
 
   opts.on('-s', '--sink',
           "When transmitting, source pattern to network.",
@@ -105,19 +102,40 @@ END
   opts.on('-n', '--numbufs NUM', "Set number of buffers to send / receive (default = #{options[:num_buffers]})") do |num|
     options[:num_buffers] = num.to_i if num.to_i > 0
   end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
 end
 
 
-optparse.parse!
+begin
+  optparse.parse!
 
+  if options[:transmit]
+    #we require one argument: the host to connect to.
+    if ARGV.length < 1
+      raise "Transmit option requires a command line argument specifying the host to connect and transmit to."
+    end
+    options[:host] = ARGV[0]
+  end
 
-unless options[:transmit] || options[:receive]
+  unless options[:transmit] || options[:receive]
+    raise "You must select either transmit or receive option"
+  end
 
-  puts optparse.help
+  if options[:transmit] && options[:receive]
+    raise "You cannot select both transmit and receive options."
+  end
+
+rescue Exception => x
+  $stderr.puts optparse
+  $stderr.puts x
   exit(1)
-
 end
 
+exit(0) if ENV['DRY_RUN']
 
 ttcp = TTCP::TTCP.new options
 ttcp.run
