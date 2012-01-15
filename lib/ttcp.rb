@@ -90,21 +90,18 @@ module TTCP
           # create a socket to transmit to
           if @options[:udp]
             @socket = UDPSocket.new
-            puts "about to bind to #{@options[:host]} port #{@options[:port]}"
             @socket.connect(@options[:host], @options[:port])
-
           else
             @socket = TCPSocket.new(@options[:host], @options[:port])
           end
 
         elsif @options[:receive]
 
+          # create a socket to receive from
           if @options[:udp]
             @socket = UDPSocket.new
-            puts "about to bind to #{@options[:host]} port #{@options[:port]}"
             @socket.bind(@options[:host], @options[:port])
           else
-
             # create a TCPServer object
             args = []
             args << @options[:host] if @options[:host]
@@ -112,7 +109,6 @@ module TTCP
             @socket = TCPServer.new *args
             @socket.listen 0
           end
-
 
         else
           raise "TTCP must be configured to transmit or receive"

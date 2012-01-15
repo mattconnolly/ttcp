@@ -101,7 +101,6 @@ END
 
   opts.on('--version', "Output the version of TTCP") do
     puts TTCP::VERSION
-    did_version = true
     exit(0)
   end
 

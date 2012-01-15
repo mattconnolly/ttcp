@@ -3,7 +3,7 @@ require 'spec_helper'
 
 include TTCP
 
-describe "TTCP" do
+describe "TTCP Sockets" do
 
   after() do
     # ensure the ttcp instance is closed and destroyed
@@ -12,6 +12,10 @@ describe "TTCP" do
     end
     @ttcp = nil
   end
+
+  ##
+  ## Setting up ttcp socket
+  ##
 
   specify "ttcp in transmit tcp makes a tcp socket" do
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'www.google.com', :port => 80
