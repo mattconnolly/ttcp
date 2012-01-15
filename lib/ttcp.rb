@@ -62,6 +62,21 @@ module TTCP
 
     end
 
+    #
+    # close any sockets
+    #
+    def close
+      unless @socket.nil?
+        begin
+          @socket.shutdown
+        rescue
+          # ignore any errors closing the socket
+        ensure
+          @socket = nil
+        end
+      end
+    end
+
     private
 
     # get the socket to be used for this ttcp run
@@ -75,14 +90,30 @@ module TTCP
           # create a socket to transmit to
           if @options[:udp]
             @socket = UDPSocket.new
-            @socket.bind(@options[:host], @options[:port])
+            puts "about to bind to #{@options[:host]} port #{@options[:port]}"
+            @socket.connect(@options[:host], @options[:port])
 
           else
             @socket = TCPSocket.new(@options[:host], @options[:port])
           end
 
         elsif @options[:receive]
-          raise NotImplementedError.new("todo...")
+
+          if @options[:udp]
+            @socket = UDPSocket.new
+            puts "about to bind to #{@options[:host]} port #{@options[:port]}"
+            @socket.bind(@options[:host], @options[:port])
+          else
+
+            # create a TCPServer object
+            args = []
+            args << @options[:host] if @options[:host]
+            args << @options[:port]
+            @socket = TCPServer.new *args
+            @socket.listen 0
+          end
+
+
         else
           raise "TTCP must be configured to transmit or receive"
         end
