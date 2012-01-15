@@ -8,3 +8,6 @@ pkg/*
 
 # ruby mine noise
 .idea/
+
+# ignore ci_reporter output from rspec tests:
+spec/reports
