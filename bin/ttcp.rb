@@ -44,25 +44,6 @@ optparse = OptionParser.new do |opts|
   opts.banner = <<END
 Usage: ttcp.rb -t [options] host [ < in ]
        ttcp.rb -r [options > out]
-
-Common options:
--l ##	length of bufs read from or written to network (default 8192)
--u	use UDP instead of TCP
--p ##	port number to send to or listen at (default 5001)
--s	-t: source a pattern to network
--r: sink (discard) all data from network
-###-A	align the start of buffers to this modulus (default 16384)
-###-O	start buffers at this offset from the modulus (default 0)
--v	verbose: print more statistics
-###-d	set SO_DEBUG socket option
-###-b ##	set socket buffer size (if supported)
--f X	format for rate: k,K = kilo{bit,byte}; m,M = mega; g,G = giga
-Options specific to -t:
--n##	number of source bufs written to network (default 2048)
-###-D	don't buffer TCP writes (sets TCP_NODELAY socket option)
-Options specific to -r:
-###-B	for -s, only output full blocks as specified by -l (for TAR)
--T	\"touch\": access each byte as it's read
 END
 
   opts.separator "Must choose one of:"
