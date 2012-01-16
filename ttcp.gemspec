@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Matt Connolly"]
   s.email       = ["matt@soundevolution.com.au"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{A ruby implementation of the TTCP network test program.}
+  s.description = %q{Based on the C command line tool at http://www.pcausa.com/Utilities/pcattcp.htm}
 
   s.rubyforge_project = "ttcp-rb"
 
