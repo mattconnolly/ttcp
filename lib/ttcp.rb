@@ -60,11 +60,11 @@ module TTCP
         if @options[:transmit]
           puts "ttcp-t buflen=%d, nbuf=%d, remote port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
 
-          b = source_buffer
+          buf = source_buffer
 
           socket.write "ttcp" if @options[:udp]
           @options[:num_buffers].times do
-            socket.write b
+            socket.write buf
           end
           socket.write "ttcp" if @options[:udp]
 
@@ -74,9 +74,16 @@ module TTCP
           receiving = true
           sentinel_count = 0
 
+          receiving_socket = if @options[:tcp]
+                               @socket.accept
+                             else
+                               @socket
+                             end
+
           while receiving
-            buf = socket.recv @options[:length]
-            if buf.nil?
+
+            buf = receiving_socket.recv @options[:length]
+            if buf.nil? || (@options[:tcp] && buf.length == 0)
               receiving = false
             else
               if @options[:udp]
@@ -92,6 +99,11 @@ module TTCP
                 end
               end
             end
+          end
+
+          if @options[:tcp]
+            receiving_socket.close unless receiving_socket.closed?
+            receiving_socket = nil
           end
 
         end

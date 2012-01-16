@@ -139,4 +139,29 @@ describe "TTCP Transmitting" do
     # thread should have finished
     thread.alive?.should be_false
   end
+
+  specify "TTCP receives over TCP from another TTCP sending to TCP" do
+
+    thread = Thread.new do
+
+      sleep 0.3
+
+      ttcp2 = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'localhost', :port =>TEST_PORT
+      ttcp2.run
+
+    end
+
+    sleep 0.1
+
+    thread.alive?.should be_true
+
+    @ttcp = TTCP::TTCP.new :receive=> true, :tcp => true, :host => 'localhost', :port =>TEST_PORT
+    @ttcp.run
+
+    @ttcp.duration.should_not be_nil
+    @ttcp.duration.should > 0
+
+    thread.join
+    thread.alive?.should be_false
+  end
 end
