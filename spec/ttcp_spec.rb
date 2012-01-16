@@ -63,16 +63,6 @@ describe "TTCP Transmitting" do
 
   TEST_PORT = 5003
 
-  before do
-    #@test_socket = TCPServer.new 5001
-    #@test_socket.accept
-  end
-
-  after do
-    #@test_socket.shutdown
-    #@test_socket = nil
-  end
-
   specify "TTCP transmit over TCP to no server fails" do
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'localhost', :port => TEST_PORT+1
     lambda { @ttcp.run }.should raise_error
@@ -164,4 +154,32 @@ describe "TTCP Transmitting" do
     thread.join
     thread.alive?.should be_false
   end
+
+
+  specify "TTCP receives over UDP from another TTCP sending to UDP" do
+
+    thread = Thread.new do
+
+      sleep 0.3
+
+      ttcp2 = TTCP::TTCP.new :transmit => true, :tcp => false, :udp => true, :host => 'localhost', :port =>TEST_PORT
+      ttcp2.run
+
+    end
+
+    sleep 0.1
+
+    thread.alive?.should be_true
+
+    @ttcp = TTCP::TTCP.new :receive=> true, :tcp => false, :udp => true, :host => 'localhost', :port =>TEST_PORT
+    @ttcp.run
+
+    @ttcp.duration.should_not be_nil
+    @ttcp.duration.should > 0
+
+    thread.join
+    thread.alive?.should be_false
+  end
+
+
 end
