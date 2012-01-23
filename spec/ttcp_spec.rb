@@ -1,7 +1,6 @@
 require "rspec"
 require 'spec_helper'
 
-include TTCP
 
 describe "TTCP Sockets" do
 
@@ -19,6 +18,7 @@ describe "TTCP Sockets" do
 
   specify "ttcp in transmit tcp makes a tcp socket" do
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'www.google.com', :port => 80
+    @ttcp.stdout_to_null
     TTCP::TTCP.publicize_methods do
       @ttcp.socket.should be_a(TCPSocket)
     end
@@ -26,6 +26,7 @@ describe "TTCP Sockets" do
 
   specify "ttcp in transmit udp makes a udp socket" do
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => false, :udp => true, :host => 'localhost'
+    @ttcp.stdout_to_null
     TTCP::TTCP.publicize_methods do
       @ttcp.socket.should be_a(UDPSocket)
     end
@@ -33,6 +34,7 @@ describe "TTCP Sockets" do
 
   specify "ttcp in receive tcp makes a tcp socket" do
     @ttcp = TTCP::TTCP.new :receive => true, :tcp => true, :host => 'localhost'
+    @ttcp.stdout_to_null
     TTCP::TTCP.publicize_methods do
       @ttcp.socket.should be_a(TCPSocket)
     end
@@ -40,6 +42,7 @@ describe "TTCP Sockets" do
 
   specify "ttcp in receive udp makes a udp socket" do
     @ttcp = TTCP::TTCP.new :receive => true, :tcp => false, :udp => true, :host => 'localhost'
+    @ttcp.stdout_to_null
     TTCP::TTCP.publicize_methods do
       @ttcp.socket.should be_a(UDPSocket)
     end
@@ -47,6 +50,7 @@ describe "TTCP Sockets" do
 
   specify "ttcp in udp has a minimum buffer length greater than 4" do
     @ttcp = TTCP::TTCP.new :transmit => true, :udp => true, :host => 'localhost', :length => 3
+    @ttcp.stdout_to_null
     @ttcp.options[:length].should > 4
   end
 
@@ -65,6 +69,7 @@ describe "TTCP Transmitting" do
 
   specify "TTCP transmit over TCP to no server fails" do
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'localhost', :port => TEST_PORT+1
+    @ttcp.stdout_to_null
     lambda { @ttcp.run }.should raise_error
   end
 
@@ -85,6 +90,7 @@ describe "TTCP Transmitting" do
     thread.socket.should be_nil
 
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'localhost', :port => TEST_PORT
+    @ttcp.stdout_to_null
     lambda { @ttcp.run }.should_not raise_error
     @ttcp.duration.should_not be_nil
     @ttcp.duration.should > 0
@@ -117,6 +123,7 @@ describe "TTCP Transmitting" do
     thread.socket.should_not be_nil
 
     @ttcp = TTCP::TTCP.new :transmit => true, :tcp => false, :udp => true, :host => 'localhost', :port => TEST_PORT
+    @ttcp.stdout_to_null
     lambda { @ttcp.run }.should_not raise_error
     @ttcp.duration.should_not be_nil
     @ttcp.duration.should > 0
@@ -137,6 +144,7 @@ describe "TTCP Transmitting" do
       sleep 0.3
 
       ttcp2 = TTCP::TTCP.new :transmit => true, :tcp => true, :host => 'localhost', :port =>TEST_PORT
+      ttcp2.stdout_to_null
       ttcp2.run
 
     end
@@ -146,6 +154,7 @@ describe "TTCP Transmitting" do
     thread.alive?.should be_true
 
     @ttcp = TTCP::TTCP.new :receive=> true, :tcp => true, :host => 'localhost', :port =>TEST_PORT
+    @ttcp.stdout_to_null
     @ttcp.run
 
     @ttcp.duration.should_not be_nil
@@ -163,6 +172,7 @@ describe "TTCP Transmitting" do
       sleep 0.3
 
       ttcp2 = TTCP::TTCP.new :transmit => true, :tcp => false, :udp => true, :host => 'localhost', :port =>TEST_PORT
+      ttcp2.stdout_to_null
       ttcp2.run
 
     end
@@ -172,6 +182,7 @@ describe "TTCP Transmitting" do
     thread.alive?.should be_true
 
     @ttcp = TTCP::TTCP.new :receive=> true, :tcp => false, :udp => true, :host => 'localhost', :port =>TEST_PORT
+    @ttcp.stdout_to_null
     @ttcp.run
 
     @ttcp.duration.should_not be_nil

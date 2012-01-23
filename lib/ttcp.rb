@@ -27,6 +27,7 @@ module TTCP
 
     attr_reader :options
     attr_reader :bytes_received
+    attr_accessor :stdout
 
     def self.default_options
       DEFAULT_OPTIONS
@@ -45,6 +46,10 @@ module TTCP
       end
 
       @bytes_received = 0
+
+      # by default, use the stdout.
+      @stdout = $stdout
+
     end
 
     #
@@ -58,7 +63,7 @@ module TTCP
         @start_time = Time.now
 
         if @options[:transmit]
-          puts "ttcp-t buflen=%d, nbuf=%d, remote port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
+          @stdout.puts "ttcp-t buflen=%d, nbuf=%d, remote port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
 
           buf = source_buffer
 
@@ -69,7 +74,7 @@ module TTCP
           socket.write "ttcp" if @options[:udp]
 
         elsif @options[:receive]
-          puts "ttcp-r buflen=%d, nbuf=%d, local port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
+          @stdout.puts "ttcp-r buflen=%d, nbuf=%d, local port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
 
           receiving = true
           sentinel_count = 0
@@ -132,6 +137,14 @@ module TTCP
           @socket = nil
         end
       end
+    end
+
+
+    #
+    # set the stdout to point to nothing
+    #
+    def stdout_to_null
+      @stdout = File.open("/dev/null", "w")
     end
 
     private
