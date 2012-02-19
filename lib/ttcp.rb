@@ -59,12 +59,8 @@ module TTCP
     #
     def run
       begin
-        # get the socket we will communicate on
         num_bytes = 0
         num_calls = 0
-
-        #socket
-
 
         if @options[:transmit]
           message "buflen=%d, nbuf=%d, remote port=%d" % [@options[:length], @options[:num_buffers], @options[:port]]
@@ -90,7 +86,15 @@ module TTCP
 
           if @options[:tcp]
             receiving_socket = socket.accept
-            message("accept from #{receiving_socket.remote_address.ip_address}:#{receiving_socket.remote_address.ip_port}")
+            remote_address =
+                if receiving_socket.respond_to? :remote_address
+                  "#{receiving_socket.remote_address.ip_address}:#{receiving_socket.remote_address.ip_port}"
+                elsif receiving_socket.respond_to? :peeraddr # this is what JRuby 1.6.5 has instead
+                  "#{receiving_socket.peeraddr[2]}:#{receiving_socket.peeraddr[1]}"
+                else
+                  "<Unknown>"
+                end
+            message("accept from #{remote_address}")
           else
             receiving_socket = socket
           end
