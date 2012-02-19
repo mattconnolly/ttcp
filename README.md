@@ -44,8 +44,9 @@ Optionally:
 
 ## Compatibility
 
-* MRI ruby 1.9.2+, or
-* JRuby in 1.9 compat mode
+* MRI ruby 1.8.7
+* MRI ruby 1.9.2
+* JRuby (tested in 1.9 compatibility mode)
 
 ## Contributing
 
