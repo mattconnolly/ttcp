@@ -1,5 +1,6 @@
 require "rspec"
 require 'spec_helper'
+require "stringio"
 
 
 describe "TTCP Sockets" do
@@ -57,6 +58,7 @@ describe "TTCP Sockets" do
   specify "ttcp without options raises exception because neither transmit nor receive is specified" do
     lambda do
       @ttcp = TTCP::TTCP.new
+      @ttcp.stdout_to_null
       @ttcp.socket
     end.should raise_error
   end
@@ -190,6 +192,27 @@ describe "TTCP Transmitting" do
 
     thread.join
     thread.alive?.should be_false
+  end
+
+
+end
+
+describe "Output formatting" do
+
+  [
+      [ 'Kilobytes', 'K', 1.5*1024, 2.0, "0.750 K" ],
+      [ 'Kilobits', 'k', 16*1024, 2.0, "1.000 Kbit" ],
+      [ 'Megabytes', 'M', 1.5*1024**2, 2.0, "0.750 M" ],
+      [ 'Gigabytes', 'G', 4.5*1024**3, 2.0, "2.250 G" ],
+      [ 'Megabits', 'm', 16*1024**2, 2.0, "1.000 Mbit" ],
+      [ 'Gigabits', 'g', 16*1024**3, 2.0, "1.000 Gbit" ]
+  ].each do |spec|
+
+    it "Calculates #{spec[0]} / sec correctly" do
+      @ttcp = TTCP::TTCP.new :format => spec[1]
+      result = @ttcp.instance_eval { format_rate(spec[2], spec[3]) }
+      result.should == spec[4]
+    end
   end
 
 

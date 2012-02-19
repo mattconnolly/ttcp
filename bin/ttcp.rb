@@ -77,6 +77,10 @@ END
     options[:port] = port.to_i if port.to_i > 0
   end
 
+  opts.on('-f', '--format F', "Format: K = K bytes, M = M bytes, G = G Bytes, k = K bits, m = M bits, g = G bits. Default = K") do |fmt|
+    options[:format] = fmt
+  end
+
   opts.on('-v', '--verbose', "Verbose output") { options[:verbose] = true }
   opts.on('-T', '--touch', "Touch (access) all incoming data") { options[:touch] = true }
 
