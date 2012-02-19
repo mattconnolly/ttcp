@@ -1,7 +1,7 @@
 require "rspec"
 require 'spec_helper.rb'
 
-TTCP_EXECUTABLE = File.expand_path('../../bin/ttcp.rb', __FILE__)
+TTCP_EXECUTABLE = File.expand_path('../../bin/ttcp', __FILE__)
 
 
 def test_ttcp(options = '')
