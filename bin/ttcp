@@ -9,7 +9,7 @@
 
 
 require 'optparse'
-require_relative '../lib/ttcp'
+require File.expand_path('../lib/ttcp', File.dirname(__FILE__))
 
 =begin
 Usage: ttcp -t [-options] host [ < in ]\n\

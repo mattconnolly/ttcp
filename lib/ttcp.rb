@@ -1,4 +1,4 @@
-require_relative "ttcp/version"
+require File.expand_path("ttcp/version", File.dirname(__FILE__))
 require 'socket'
 
 module TTCP
@@ -241,7 +241,13 @@ module TTCP
     def source_buffer
       if @options[:sink]
         # source for sink is random data
-        Random.new.bytes @options[:length]
+        if RUBY_VERSION >= "1.9"
+          Random.new.bytes @options[:length]
+        else
+          source = ""
+          @options[:length].times { source << rand(255) }
+          source
+        end
       else
         # source for buffer is stdin
         $stdin.read @options[:length]
