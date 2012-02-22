@@ -85,7 +85,9 @@ module TTCP
           sentinel_count = 0
 
           if @options[:tcp]
+            start_advertising_service if @options[:bonjour]
             receiving_socket = socket.accept
+            stop_advertising_service if @options[:bonjour]
             remote_address =
                 if receiving_socket.respond_to? :remote_address
                   "#{receiving_socket.remote_address.ip_address}:#{receiving_socket.remote_address.ip_port}"
@@ -143,6 +145,25 @@ module TTCP
 
     end
 
+    def stop_advertising_service
+      if @bonjour
+        @bonjour.stop
+        @bonjour = nil
+      end
+    end
+
+    def start_advertising_service
+      require 'dnssd'
+
+      text_record = DNSSD::TextRecord.new :id => unique_id
+      @bonjour = DNSSD::register "TTCP-#{unique_id}", "_ttcp._tcp", nil, @options[:port], text_record
+    rescue LoadError
+      @stderr.puts "DNSSD not available"
+    end
+
+    def unique_id
+      @unique_id ||= rand(999999)
+    end
 
     def duration
       @finish_time - @start_time if @finish_time

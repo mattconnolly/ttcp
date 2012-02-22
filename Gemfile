@@ -8,3 +8,9 @@ group :development, :test do
   gem 'guard'
   gem 'guard-rspec'
 end
+
+# use bundle --without bonjour to not have dnssd loaded.
+group :bonjour do
+  gem 'dnssd'
+end
+
